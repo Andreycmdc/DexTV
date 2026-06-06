@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DexTV - Anime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0f; --surface: #111118; --card: #16161f;
+  --border: rgba(255,255,255,0.06); --accent: #e50914;
+  --text: #f0f0f0; --muted: #888;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 40px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(10,10,15,0.98), transparent);
+  backdrop-filter: blur(12px); transition: background 0.3s;
+}
+header.scrolled { background: rgba(10,10,15,0.98); }
+.logo { font-family: var(--font-display); font-size: 28px; letter-spacing: 3px; color: var(--accent); cursor: pointer; text-shadow: 0 0 30px rgba(229,9,20,0.5); }
+.search-wrap { position: relative; display: flex; align-items: center; }
+.search-wrap input {
+  background: rgba(255,255,255,0.07); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--font-body); font-size: 14px;
+  padding: 8px 40px 8px 16px; border-radius: 6px; width: 260px;
+  outline: none; transition: all 0.3s;
+}
+.search-wrap input:focus { width: 320px; background: rgba(255,255,255,0.1); border-color: rgba(229,9,20,0.5); }
+.search-wrap input::placeholder { color: var(--muted); }
+.search-wrap .search-icon { position: absolute; right: 12px; color: var(--muted); font-size: 15px; cursor: pointer; transition: color 0.2s; }
+.search-wrap .search-icon:hover { color: var(--accent); }
+.hero { position: relative; height: 520px; display: flex; align-items: flex-end; overflow: hidden; margin-bottom: 40px; cursor: pointer; }
+.hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0a0f 0%, #0d0d1a 50%, #0a0a0f 100%); overflow: hidden; transition: all 0.5s ease; }
+.hero-bg::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(229,9,20,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 20% 60%, rgba(255,107,53,0.08) 0%, transparent 70%); }
+.hero-cards { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding-right: 60px; gap: 16px; pointer-events: none; }
+.hero-card-img { height: 340px; width: 220px; border-radius: 8px; object-fit: cover; opacity: 0; transform: translateY(20px); animation: heroCardIn 0.6s ease forwards; box-shadow: 0 20px 60px rgba(0,0,0,0.8); flex-shrink: 0; transition: opacity 0.5s, transform 0.5s; }
+.hero-card-img:nth-child(1) { animation-delay: 0.1s; margin-top: 40px; }
+.hero-card-img:nth-child(2) { animation-delay: 0.2s; margin-top: -20px; }
+.hero-card-img:nth-child(3) { animation-delay: 0.3s; margin-top: 20px; }
+.hero-card-img:nth-child(4) { animation-delay: 0.4s; margin-top: -40px; }
+@keyframes heroCardIn { to { opacity: 1; transform: translateY(0); } }
+.hero-gradient { position: absolute; inset: 0; background: linear-gradient(to right, rgba(10,10,15,1) 0%, rgba(10,10,15,0.85) 40%, rgba(10,10,15,0.2) 70%, transparent 100%), linear-gradient(to top, rgba(10,10,15,1) 0%, transparent 40%); }
+.hero-content { position: relative; z-index: 2; padding: 0 60px 50px; max-width: 600px; }
+.hero-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+.hero-title { font-family: var(--font-display); font-size: 64px; line-height: 1; letter-spacing: 2px; margin-bottom: 16px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+.hero-title span { color: var(--accent); }
+.hero-desc { color: rgba(240,240,240,0.7); font-size: 15px; line-height: 1.6; margin-bottom: 28px; max-width: 420px; }
+.hero-stats { display: flex; gap: 28px; margin-bottom: 28px; }
+.stat { text-align: center; }
+.stat-num { font-family: var(--font-display); font-size: 28px; color: var(--accent); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.cat-bar { display: flex; gap: 8px; padding: 0 40px; margin-bottom: 32px; overflow-x: auto; scrollbar-width: none; }
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-btn { flex-shrink: 0; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 7px 18px; border-radius: 20px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.cat-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+.cat-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.section-head { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; margin-bottom: 16px; }
+.section-title { font-family: var(--font-display); font-size: 22px; letter-spacing: 1px; color: var(--text); }
+.section-title span { color: var(--accent); }
+.results-count { font-size: 12px; color: var(--muted); }
+.anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; padding: 0 40px; }
+.anime-card { position: relative; border-radius: 8px; overflow: hidden; cursor: pointer; background: var(--card); aspect-ratio: 2/3; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s; opacity: 0; animation: fadeUp 0.4s ease forwards; }
+.anime-card:hover { transform: scale(1.06) translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 0 2px var(--accent); z-index: 10; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.anime-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+.anime-card:hover img { transform: scale(1.05); }
+.card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%); opacity: 0; transition: opacity 0.3s; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px; }
+.anime-card:hover .card-overlay { opacity: 1; }
+.card-title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+.card-meta { font-size: 11px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+.card-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+.card-score { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(4px); font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 4px; color: #ffd700; }
+.card-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.6); width: 44px; height: 44px; background: rgba(229,9,20,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.25s; }
+.card-play::after { content: ''; border: 8px solid transparent; border-left: 14px solid #fff; margin-left: 3px; }
+.anime-card:hover .card-play { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.load-more-wrap { text-align: center; padding: 40px; }
+.load-more-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); font-family: var(--font-body); font-size: 14px; font-weight: 500; padding: 12px 40px; border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+.load-more-btn:hover { background: var(--accent); border-color: var(--accent); }
+.loading { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--muted); }
+.spinner { width: 36px; height: 36px; border: 3px solid rgba(229,9,20,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty { grid-column: 1/-1; text-align: center; padding: 80px; color: var(--muted); font-size: 15px; }
+.skeleton-card { background: var(--card); border-radius: 8px; aspect-ratio: 2/3; overflow: hidden; position: relative; }
+.skeleton-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%); animation: shimmer 1.5s infinite; }
+@keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.hero-dot-indicators { position: absolute; bottom: 20px; right: 60px; z-index: 10; display: flex; gap: 10px; }
+.hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s; }
+.hero-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+@media (max-width: 768px) {
+  header { padding: 0 16px; }
+  .search-wrap input { width: 160px; }
+  .search-wrap input:focus { width: 200px; }
+  .hero { height: 380px; }
+  .hero-content { padding: 0 20px 36px; }
+  .hero-title { font-size: 42px; }
+  .hero-cards { display: none; }
+  .cat-bar, .section-head { padding: 0 16px; }
+  .anime-grid { padding: 0 16px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .hero-dot-indicators { right: 20px; }
+}
+</style>
+</head>
+<body>
+
+<header id="mainHeader">
+  <div class="logo" onclick="location.href='anime.html'">DEX<span style="color:#fff">TV</span></div>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Buscar anime..." autocomplete="off">
+    <span class="search-icon" id="searchBtn">⌕</span>
+  </div>
+</header>
+
+<div class="hero" id="heroBanner">
+  <div class="hero-bg">
+    <div class="hero-cards" id="heroCards"></div>
+    <div class="hero-gradient"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-label" id="heroLabel">🔥 CATÁLOGO COMPLETO</div>
+    <div class="hero-title" id="heroTitle">ANIME <span>PARA</span><br>TODOS</div>
+    <div class="hero-desc" id="heroDesc">Miles de títulos en un solo lugar. Desde clásicos hasta los últimos estrenos.</div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Animes</div></div>
+      <div class="stat"><div class="stat-num">HD</div><div class="stat-label">Calidad</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Gratis</div></div>
+    </div>
+  </div>
+  <div class="hero-dot-indicators" id="heroDots"></div>
+</div>
+
+<div class="cat-bar" id="catBar">
+  <button class="cat-btn active" data-cat="all">Todo</button>
+  <button class="cat-btn" data-cat="popular">🔥 Popular</button>
+  <button class="cat-btn" data-cat="new">✨ Nuevos</button>
+  <button class="cat-btn" data-cat="action">⚔️ Acción</button>
+  <button class="cat-btn" data-cat="adventure">🗺️ Aventura</button>
+  <button class="cat-btn" data-cat="romance">💕 Romance</button>
+  <button class="cat-btn" data-cat="comedy">😂 Comedia</button>
+  <button class="cat-btn" data-cat="fantasy">🧙 Fantasía</button>
+  <button class="cat-btn" data-cat="horror">👻 Horror</button>
+  <button class="cat-btn" data-cat="drama">🎭 Drama</button>
+  <button class="cat-btn" data-cat="scifi">🚀 Sci-Fi</button>
+  <button class="cat-btn" data-cat="sports">⚽ Deportes</button>
+  <button class="cat-btn" data-cat="mecha">🤖 Mecha</button>
+</div>
+
+<div class="section-head">
+  <div class="section-title" id="sectionTitle">CATÁLOGO <span>COMPLETO</span></div>
+  <div class="results-count" id="resultsCount"></div>
+</div>
+
+<div class="anime-grid" id="animeGrid">
+  <div class="skeleton-card"></div><div class="skeleton-card"></div>
+  <div class="skeleton-card"></div><div class="skeleton-card"></div>
+  <div class="skeleton-card"></div><div class="skeleton-card"></div>
+  <div class="skeleton-card"></div><div class="skeleton-card"></div>
+  <div class="skeleton-card"></div><div class="skeleton-card"></div>
+</div>
+
+<div class="load-more-wrap">
+  <button class="load-more-btn" id="loadMoreBtn" style="display:none">Cargar más</button>
+</div>
+
+<script type="module">
+import { searchAnime, searchByCategory, buildAnime1vUrl, clearCache } from './js/api.js';
+
+const grid         = document.getElementById('animeGrid');
+const loadMoreBtn  = document.getElementById('loadMoreBtn');
+const resultsCount = document.getElementById('resultsCount');
+const sectionTitle = document.getElementById('sectionTitle');
+const searchInput  = document.getElementById('searchInput');
+const searchBtn    = document.getElementById('searchBtn');
+const statTotal    = document.getElementById('statTotal');
+const heroCards    = document.getElementById('heroCards');
+const heroDots     = document.getElementById('heroDots');
+const heroLabel    = document.getElementById('heroLabel');
+const heroTitle    = document.getElementById('heroTitle');
+const heroDesc     = document.getElementById('heroDesc');
+const header       = document.getElementById('mainHeader');
+
+const ITEMS_PER_PAGE = 30;
+let allAnimes      = [];
+let filteredAnimes = [];
+let currentPage    = 1;
+let isLoading      = false;
+let searchTimeout  = null;
+
+// Hero rotativo
+let heroSlides = [];
+let currentHeroIndex = 0;
+let heroInterval = null;
+
+window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 60));
+
+async function init() {
+  setupListeners();
+  await loadAnimes();
+  startHeroRotation();
+}
+
+async function loadAnimes() {
+  if (isLoading) return;
+  isLoading = true;
+  showSkeletons();
+  const animes = await searchAnime('anime');
+  allAnimes = animes;
+  filteredAnimes = animes;
+  statTotal.textContent = allAnimes.length;
+  buildHeroSlides(allAnimes);
+  renderAnimes();
+  isLoading = false;
+}
+
+function buildHeroSlides(animes) {
+  const topAnimes = animes.filter(a => a.picture && !a.picture.includes('placehold')).slice(0, 16);
+  
+  const slidesData = [
+    { label: '🔥 TRENDING', title: 'NARUTO', desc: 'El ninja más famoso de Konoha en una aventura épica.' },
+    { label: '⭐ TOP RATED', title: 'ONE PIECE', desc: 'El tesoro más grande del mundo te espera.' },
+    { label: '⚔️ ACCIÓN', title: 'DEMON SLAYER', desc: 'La historia de Tanjiro y su hermana Nezuko.' },
+    { label: '🎬 ÉPICO', title: 'ATTACK ON TITAN', desc: 'La humanidad lucha por su supervivencia.' },
+    { label: '✨ POPULAR', title: 'JUJUTSU KAISEN', desc: 'Ryoumen Sukuna y los hechiceros más poderosos.' }
+  ];
+  
+  for (let i = 0; i < slidesData.length; i++) {
+    const images = topAnimes.slice(i * 4, i * 4 + 4).map(a => a.picture);
+    heroSlides.push({
+      ...slidesData[i],
+      images: images.length >= 4 ? images : [
+        'https://cdn.myanimelist.net/images/anime/13/17405l.jpg',
+        'https://cdn.myanimelist.net/images/anime/6/73245l.jpg',
+        'https://cdn.myanimelist.net/images/anime/1286/99889l.jpg',
+        'https://cdn.myanimelist.net/images/anime/1000/110531l.jpg'
+      ]
+    });
+  }
+  
+  updateHeroDisplay(0);
+  renderHeroDots();
+}
+
+function renderHeroDots() {
+  if (!heroDots) return;
+  heroDots.innerHTML = heroSlides.map((_, i) => 
+    `<div class="hero-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`
+  ).join('');
+  
+  document.querySelectorAll('.hero-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      stopHeroRotation();
+      currentHeroIndex = parseInt(dot.dataset.index);
+      updateHeroDisplay(currentHeroIndex);
+      startHeroRotation();
+    });
+  });
+}
+
+function updateHeroDisplay(index) {
+  const slide = heroSlides[index];
+  if (!slide) return;
+  
+  if (heroLabel) heroLabel.textContent = slide.label;
+  if (heroTitle) heroTitle.innerHTML = slide.title + ' <span>PARA</span><br>TODOS';
+  if (heroDesc) heroDesc.textContent = slide.desc;
+  
+  if (heroCards && slide.images) {
+    heroCards.innerHTML = slide.images.map(img => 
+      `<img class="hero-card-img" src="${img}" alt="" onerror="this.style.display='none'">`
+    ).join('');
+  }
+  
+  document.querySelectorAll('.hero-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+}
+
+function startHeroRotation() {
+  if (heroInterval) clearInterval(heroInterval);
+  heroInterval = setInterval(() => {
+    currentHeroIndex = (currentHeroIndex + 1) % heroSlides.length;
+    updateHeroDisplay(currentHeroIndex);
+  }, 6000);
+}
+
+function stopHeroRotation() {
+  if (heroInterval) {
+    clearInterval(heroInterval);
+    heroInterval = null;
+  }
+}
+
+function renderAnimes() {
+  const end  = currentPage * ITEMS_PER_PAGE;
+  const list = filteredAnimes.slice(0, end);
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty">🎌 No se encontraron animes</div>';
+    loadMoreBtn.style.display = 'none';
+    return;
+  }
+
+  grid.innerHTML = list.map((anime, i) => {
+    const url   = buildAnime1vUrl(anime.title);
+    const score = anime.score ? `⭐ ${anime.score}` : '';
+    const pic   = anime.picture || `https://placehold.co/300x450/111118/e50914?text=${encodeURIComponent(anime.title.substring(0,2).toUpperCase())}`;
+    return `
+      <div class="anime-card" data-url="${url}" data-title="${esc(anime.title)}"
+           style="animation-delay:${(i % ITEMS_PER_PAGE) * 18}ms">
+        ${score ? `<div class="card-score">${score}</div>` : ''}
+        <img src="${pic}" alt="${esc(anime.title)}" loading="lazy"
+             onerror="this.src='https://placehold.co/300x450/111118/e50914?text=${encodeURIComponent(anime.title.substring(0,2).toUpperCase())}'">
+        <div class="card-play"></div>
+        <div class="card-overlay">
+          <div class="card-title">${esc(anime.title)}</div>
+          <div class="card-meta">
+            <span class="card-badge">${anime.type || 'TV'}</span>
+            ${anime.year ? `<span>${anime.year}</span>` : ''}
+            ${anime.episodes && anime.episodes !== '?' ? `<span>${anime.episodes} eps</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.anime-card').forEach(card => {
+    card.addEventListener('click', () => {
+      window.location.href = `player.html?url=${encodeURIComponent(card.dataset.url)}&title=${encodeURIComponent(card.dataset.title)}`;
+    });
+  });
+
+  resultsCount.textContent = `${list.length} de ${filteredAnimes.length} animes`;
+  loadMoreBtn.style.display = filteredAnimes.length > end ? 'block' : 'none';
+}
+
+async function loadCategory(cat) {
+  currentPage = 1;
+  showSkeletons();
+  const labels = {
+    all:'CATÁLOGO <span>COMPLETO</span>', popular:'LO MÁS <span>POPULAR</span>',
+    new:'ÚLTIMOS <span>ESTRENOS</span>', action:'ANIME DE <span>ACCIÓN</span>',
+    adventure:'AVENTURA <span>ÉPICA</span>', romance:'AMOR Y <span>ROMANCE</span>',
+    comedy:'COMEDIA <span>PURA</span>', fantasy:'MUNDOS <span>FANTÁSTICOS</span>',
+    horror:'TERROR Y <span>HORROR</span>', drama:'DRAMA <span>INTENSO</span>',
+    scifi:'CIENCIA <span>FICCIÓN</span>', sports:'ANIME DE <span>DEPORTES</span>',
+    mecha:'ROBOTS Y <span>MECHA</span>',
+  };
+  sectionTitle.innerHTML = labels[cat] || 'CATÁLOGO <span>COMPLETO</span>';
+  filteredAnimes = cat === 'all' ? allAnimes : await searchByCategory(cat);
+  renderAnimes();
+}
+
+// BÚSQUEDA FUNCIONAL
+async function doSearch() {
+  const q = searchInput.value.trim();
+  currentPage = 1;
+
+  if (!q) {
+    filteredAnimes = allAnimes;
+    sectionTitle.innerHTML = 'CATÁLOGO <span>COMPLETO</span>';
+    renderAnimes();
+    return;
+  }
+
+  sectionTitle.innerHTML = `RESULTADOS <span>"${esc(q)}"</span>`;
+  showSkeletons();
+
+  try {
+    const seen = new Set();
+    const results = [];
+
+    for (const api of (await getAPIs())) {
+      try {
+        const res = await fetch(`${api.baseUrl}/search?q=${encodeURIComponent(q)}&limit=30`, {
+          headers: { [api.authHeader]: api.apiKey }
+        });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const items = data?.data?.results || data?.results || data?.data || [];
+        for (const a of items) {
+          if (!a.title || seen.has(a.title.toLowerCase())) continue;
+          seen.add(a.title.toLowerCase());
+          results.push({
+            id: a.id, title: a.title, slug: a.slug,
+            type: a.type || 'Anime', episodes: a.episodes || '?',
+            url: a.url, year: a.year || null, score: a.score || null,
+            picture: null, genres: a.genres || []
+          });
+        }
+        if (results.length > 0) break;
+      } catch (_) {}
+    }
+
+    await Promise.all(results.slice(0, 10).map(async anime => {
+      try {
+        const r = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(anime.title)}&limit=1`);
+        if (r.ok) {
+          const d = await r.json();
+          anime.picture = d.data?.[0]?.images?.jpg?.large_image_url || null;
+        }
+      } catch (_) {}
+    }));
+
+    filteredAnimes = results;
+  } catch (_) {
+    filteredAnimes = [];
+  }
+
+  renderAnimes();
+}
+
+let _apis = null;
+async function getAPIs() {
+  if (_apis) return _apis;
+  const { CONFIG } = await import('./js/config.js');
+  _apis = CONFIG.APIS;
+  return _apis;
+}
+
+function showSkeletons() {
+  grid.innerHTML = Array(10).fill('<div class="skeleton-card"></div>').join('');
+  loadMoreBtn.style.display = 'none';
+}
+
+function setupListeners() {
+  searchBtn.addEventListener('click', doSearch);
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    if (!searchInput.value.trim()) {
+      filteredAnimes = allAnimes;
+      sectionTitle.innerHTML = 'CATÁLOGO <span>COMPLETO</span>';
+      currentPage = 1;
+      renderAnimes();
+      return;
+    }
+    searchTimeout = setTimeout(doSearch, 400);
+  });
+
+  document.getElementById('catBar').addEventListener('click', e => {
+    const btn = e.target.closest('.cat-btn');
+    if (!btn) return;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadCategory(btn.dataset.cat);
+  });
+
+  loadMoreBtn.addEventListener('click', () => {
+    currentPage++;
+    renderAnimes();
+    loadMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'C') clearCache();
+  });
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+init();
+</script>
+</body>
+</html>
