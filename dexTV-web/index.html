@@ -5,895 +5,832 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DexTV — Streaming Gratis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
-  --bg:      #0a0a0f;
-  --surface: #111118;
-  --card:    #16161f;
-  --card2:   #1a1a25;
-  --border:  rgba(255,255,255,0.06);
-  --accent:  #e50914;
-  --accent2: #ff2d3a;
-  --text:    #f0f0f0;
-  --muted:   #888;
-  --muted2:  #aaa;
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body:    'Outfit', sans-serif;
+:root{
+  --bg:#06050f;
+  --s1:#0d0b1a;
+  --s2:#13112200;
+  --border:rgba(168,85,247,.1);
+  --border2:rgba(168,85,247,.24);
+  --acc:#a855f7;
+  --acc2:#7c3aed;
+  --acc3:#c084fc;
+  --red:#e50914;
+  --text:#f0eeff;
+  --muted:#7c6fa0;
+  --muted2:#b0a0cc;
+  --fd:'Bebas Neue',sans-serif;
+  --fb:'Outfit',sans-serif;
 }
 
-html { scroll-behavior: smooth; }
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;min-height:100vh}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  overflow-x: hidden;
+/* ── HEADER ── */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  height:68px;padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(to bottom,rgba(6,5,15,.95),rgba(6,5,15,0));
+  transition:background .4s;
+}
+header.solid{background:rgba(6,5,15,.97);border-bottom:1px solid var(--border)}
+
+.logo{display:flex;align-items:center;gap:0;text-decoration:none;cursor:pointer}
+.logo img{height:68px;object-fit:contain;mix-blend-mode:screen;filter:brightness(1.2) saturate(1.1)}
+.logo-fb{font-family:var(--fd);font-size:28px;letter-spacing:4px;background:linear-gradient(135deg,var(--acc3),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:none}
+
+nav{display:flex;align-items:center;gap:2px}
+.nb{background:none;border:none;color:var(--muted2);font-family:var(--fb);font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:color .2s,background .2s}
+.nb img{width:22px;height:22px;object-fit:contain;mix-blend-mode:screen;filter:brightness(1.1) saturate(1.5);opacity:.85}
+.nb:hover{color:#fff;background:rgba(168,85,247,.12)}
+.nb.active{color:var(--acc3);background:rgba(168,85,247,.15);border:1px solid var(--border2)}
+.nb .lbl{}
+
+/* ── HERO ── */
+.hero{
+  position:relative;height:100vh;min-height:580px;max-height:780px;
+  display:flex;align-items:flex-end;overflow:hidden;
 }
 
-/* ─── HEADER ─── */
-header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  height: 80px;
-  padding: 0 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(10,10,15,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(229,9,20,0.1);
-  transition: background 0.3s;
+.hero-bg{position:absolute;inset:0;background:#06050f}
+
+.hero-slide{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center top;
+  opacity:0;transition:opacity .9s ease;
 }
+.hero-slide.active{opacity:1}
 
-header.scrolled { background: rgba(10,10,15,0.98); }
-
-.logo {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.logo img {
-  height: 80px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-  mix-blend-mode: screen;
-  filter: brightness(1.15) contrast(1.05);
-}
-
-.logo-fallback {
-  font-family: var(--font-display);
-  font-size: 28px;
-  letter-spacing: 3px;
-  color: var(--accent);
-  text-shadow: 0 0 30px rgba(229,9,20,0.5);
-  display: none;
-}
-
-.logo-fallback span { color: #fff; }
-
-nav { display: flex; align-items: center; gap: 4px; }
-
-.nav-btn {
-  background: none;
-  border: none;
-  color: var(--muted2);
-  font-family: var(--font-body);
-  font-size: 13.5px;
-  font-weight: 500;
-  padding: 7px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: color .2s, background .2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  letter-spacing: 0.3px;
-}
-
-.nav-btn img {
-  width: 28px; height: 28px;
-  object-fit: contain;
-  opacity: .9;
-  transition: opacity .2s;
-  display: block;
-  mix-blend-mode: screen;
-  filter: brightness(1.1);
-}
-
-.nav-btn:hover { color: #fff; background: rgba(255,255,255,.07); }
-.nav-btn:hover img { opacity: 1; }
-.nav-btn.active {
-  color: #fff;
-  background: rgba(229,9,20,.15);
-  border: 1px solid rgba(229,9,20,.25);
-}
-
-/* ─── HERO ─── */
-.hero {
-  position: relative;
-  height: 600px;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-  margin-top: 80px;
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #14040a 0%, #0d0d18 50%, #0a0a0f 100%);
-}
-
-.hero-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+.hero-overlay{
+  position:absolute;inset:0;
   background:
-    radial-gradient(ellipse 55% 60% at 65% 35%, rgba(229,9,20,.13) 0%, transparent 65%),
-    radial-gradient(ellipse 35% 50% at 15% 70%, rgba(255,80,80,.07) 0%, transparent 60%);
+    linear-gradient(to right,rgba(6,5,15,1) 0%,rgba(6,5,15,.75) 45%,rgba(6,5,15,.1) 78%,transparent 100%),
+    linear-gradient(to top,rgba(6,5,15,1) 0%,rgba(6,5,15,.6) 30%,transparent 60%);
 }
 
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(229,9,20,.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(229,9,20,.04) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 100%);
+.hero-content{
+  position:relative;z-index:2;
+  padding:0 60px 80px;
+  max-width:620px;
+  animation:fadeUp .6s ease;
 }
 
-.hero-cards {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 64px;
-  gap: 18px;
-  pointer-events: none;
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--acc3);border:1px solid rgba(168,85,247,.3);
+  padding:5px 14px;border-radius:20px;background:rgba(168,85,247,.1);
+  margin-bottom:18px;
+}
+.hero-badge .dot{width:6px;height:6px;background:#22d77a;border-radius:50%;animation:pulse 2s infinite}
+
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,215,122,.5)}70%{box-shadow:0 0 0 8px rgba(34,215,122,0)}100%{box-shadow:0 0 0 0 rgba(34,215,122,0)}}
+
+.hero-title{
+  font-family:var(--fd);font-size:82px;line-height:.9;letter-spacing:2px;
+  margin-bottom:16px;
+  text-shadow:0 4px 40px rgba(0,0,0,.7);
+}
+.hero-title .g{background:linear-gradient(135deg,var(--acc3),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.hero-meta{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.hmeta{font-size:12px;color:var(--muted2);display:flex;align-items:center;gap:5px}
+.hmeta .yr{color:var(--acc3);font-weight:600}
+.hmeta .sep{color:var(--muted);font-size:10px}
+
+.hero-desc{font-size:14.5px;color:rgba(240,238,255,.55);line-height:1.75;margin-bottom:30px;max-width:400px}
+
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-play{
+  background:linear-gradient(135deg,var(--acc2),var(--acc));
+  color:#fff;font-family:var(--fb);font-size:14px;font-weight:600;
+  padding:12px 28px;border-radius:8px;border:none;cursor:pointer;
+  box-shadow:0 8px 28px rgba(124,58,237,.45);
+  transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-play:hover{opacity:.88;transform:translateY(-2px)}
+.btn-play::before{content:'▶';font-size:12px}
+
+.btn-info{
+  background:rgba(255,255,255,.1);color:var(--text);font-family:var(--fb);font-size:14px;font-weight:500;
+  padding:12px 24px;border-radius:8px;border:1px solid rgba(255,255,255,.15);cursor:pointer;
+  transition:background .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-info:hover{background:rgba(255,255,255,.18)}
+.btn-info::before{content:'ⓘ';font-size:14px}
+
+/* progress bar */
+.hero-progress{
+  position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:rgba(255,255,255,.08);z-index:5;
+}
+.hero-progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));
+  width:0%;transition:width linear;
 }
 
-.hero-card-img {
-  height: 360px;
-  width: 230px;
-  border-radius: 10px;
-  object-fit: cover;
-  opacity: 0;
-  transform: translateY(24px);
-  animation: cardIn .6s ease forwards;
-  box-shadow: 0 24px 64px rgba(0,0,0,.85);
-  flex-shrink: 0;
-  transition: opacity .5s, transform .5s;
+/* hero dots */
+.hero-indicators{
+  position:absolute;bottom:28px;right:50px;z-index:10;
+  display:flex;gap:8px;align-items:center;
+}
+.hind{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.25);cursor:pointer;transition:all .3s;
+}
+.hind.active{background:var(--acc);width:20px;border-radius:3px}
+
+/* ── ROWS ── */
+.section{padding:0 40px 50px;position:relative;z-index:1}
+.section:first-of-type{padding-top:20px}
+
+.row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.row-label{font-size:9.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:4px}
+.row-title{
+  font-family:var(--fd);font-size:26px;letter-spacing:1px;
+  display:flex;align-items:center;gap:10px;line-height:1;
+}
+.row-title img{width:32px;height:32px;object-fit:contain;mix-blend-mode:screen;filter:brightness(1.2) saturate(1.5)}
+.row-title .g{background:linear-gradient(135deg,var(--acc3),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.row-link{
+  font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;border:1px solid var(--border);padding:6px 14px;border-radius:6px;
+  transition:all .2s;white-space:nowrap;
+}
+.row-link:hover{color:var(--acc3);border-color:var(--border2);background:rgba(168,85,247,.06)}
+
+.scroll-row{
+  display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:thin;scrollbar-color:rgba(168,85,247,.2) transparent;
+}
+.scroll-row::-webkit-scrollbar{height:3px}
+.scroll-row::-webkit-scrollbar-thumb{background:rgba(168,85,247,.25);border-radius:4px}
+
+/* ── ANIME / MOVIE CARD ── */
+.card{
+  flex-shrink:0;width:148px;border-radius:10px;overflow:hidden;cursor:pointer;
+  scroll-snap-align:start;border:1px solid var(--border);
+  background:linear-gradient(180deg,#16122a,#0f0d1e);
+  transition:transform .32s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;
+  position:relative;
+}
+.card:hover{
+  transform:scale(1.07) translateY(-5px);
+  box-shadow:0 24px 56px rgba(0,0,0,.85),0 0 0 1.5px var(--acc);
+  border-color:var(--acc);z-index:10;
+}
+.card-thumb{
+  width:100%;aspect-ratio:2/3;object-fit:cover;display:block;
+  background:#0f0d1e;transition:transform .3s;
+}
+.card:hover .card-thumb{transform:scale(1.05)}
+
+.card-play{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(.4);
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,var(--acc2),var(--acc));
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 0 30px rgba(124,58,237,.7);
+}
+.card-play::after{content:'';border:6px solid transparent;border-left:11px solid #fff;margin-left:3px}
+.card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+.card-info{padding:9px 10px 11px}
+.card-title{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.card-meta{font-size:10px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px}
+.badge{
+  background:linear-gradient(135deg,var(--acc2),var(--acc));
+  color:#fff;font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.badge-red{background:var(--red)}
+
+/* star badge */
+.card-star{
+  position:absolute;top:7px;right:7px;
+  background:rgba(0,0,0,.78);color:#facc15;font-size:9.5px;font-weight:700;
+  padding:2px 6px;border-radius:4px;backdrop-filter:blur(4px);
+  display:flex;align-items:center;gap:2px;
 }
 
-.hero-card-img:nth-child(1) { animation-delay:.10s; margin-top: 50px; }
-.hero-card-img:nth-child(2) { animation-delay:.20s; margin-top:-24px; }
-.hero-card-img:nth-child(3) { animation-delay:.30s; margin-top: 24px; }
-.hero-card-img:nth-child(4) { animation-delay:.40s; margin-top:-48px; }
+/* ── TOP 10 ROW ── */
+.top-row{display:flex;gap:0;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:rgba(168,85,247,.2) transparent}
+.top-row::-webkit-scrollbar{height:3px}
+.top-row::-webkit-scrollbar-thumb{background:rgba(168,85,247,.25);border-radius:4px}
 
-@keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
-
-.hero-gradient {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right, rgba(10,10,15,1) 0%, rgba(10,10,15,.9) 38%, rgba(10,10,15,.2) 68%, transparent 100%),
-    linear-gradient(to top, rgba(10,10,15,1) 0%, transparent 42%);
+.top-card{
+  flex-shrink:0;display:flex;align-items:flex-end;
+  width:170px;scroll-snap-align:start;cursor:pointer;
+  transition:transform .3s;position:relative;
 }
+.top-card:hover{transform:scale(1.04) translateY(-4px);z-index:10}
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 60px 56px;
-  max-width: 620px;
+.top-num{
+  font-family:var(--fd);font-size:110px;line-height:1;
+  color:transparent;
+  -webkit-text-stroke:2px rgba(168,85,247,.35);
+  user-select:none;
+  margin-right:-20px;
+  flex-shrink:0;
+  z-index:1;
+  transition:all .3s;
 }
+.top-card:hover .top-num{-webkit-text-stroke:2px var(--acc)}
 
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 14px;
+.top-thumb{
+  width:120px;height:170px;border-radius:8px;object-fit:cover;
+  border:1px solid var(--border);flex-shrink:0;
+  box-shadow:0 16px 40px rgba(0,0,0,.7);
+  transition:box-shadow .3s;
 }
+.top-card:hover .top-thumb{box-shadow:0 20px 50px rgba(124,58,237,.3),0 0 0 1.5px var(--acc)}
 
-.live-dot {
-  width: 7px; height: 7px;
-  background: #22d77a;
-  border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(34,215,122,.5);
-  animation: pulse 2s infinite;
+/* ── TV CARDS ── */
+.tv-card{
+  flex-shrink:0;width:178px;border-radius:10px;overflow:hidden;cursor:pointer;
+  scroll-snap-align:start;border:1px solid var(--border);
+  background:linear-gradient(180deg,#16122a,#0f0d1e);
+  transition:transform .32s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;
 }
-
-@keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(34,215,122,.5); }
-  70%  { box-shadow: 0 0 0 8px rgba(34,215,122,0); }
-  100% { box-shadow: 0 0 0 0 rgba(34,215,122,0); }
+.tv-card:hover{transform:translateY(-6px);box-shadow:0 20px 52px rgba(0,0,0,.7);border-color:var(--border2)}
+.tv-thumb{
+  width:100%;aspect-ratio:16/9;background:#0e0c1e;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
 }
-
-.hero-title {
-  font-family: var(--font-display);
-  font-size: 88px;
-  line-height: .92;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 30px rgba(0,0,0,.5);
+.tv-thumb::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(168,85,247,.08),transparent 70%)}
+.tv-thumb img{width:34px;height:34px;object-fit:contain;opacity:.75;position:relative;z-index:1;mix-blend-mode:screen}
+.tv-thumb-ej{font-size:30px;position:relative;z-index:1}
+.tv-live{
+  position:absolute;top:7px;right:7px;
+  background:#e03535;color:#fff;font-size:8px;font-weight:700;
+  letter-spacing:1.5px;padding:3px 7px;border-radius:3px;z-index:2;
 }
+.tv-info{padding:10px 12px 12px}
+.tv-name{font-size:13px;font-weight:600;color:var(--text)}
+.tv-sub{font-size:10px;color:var(--muted);margin-top:3px}
 
-.hero-title .red { color: var(--accent); }
+/* ── FEATURES ── */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 
-.hero-desc {
-  font-size: 15.5px;
-  color: rgba(240,240,240,.65);
-  line-height: 1.7;
-  margin-bottom: 36px;
-  max-width: 420px;
-  font-weight: 400;
+.feat{
+  background:linear-gradient(160deg,rgba(20,17,38,.6),rgba(15,13,30,.9));
+  border-radius:14px;padding:28px 24px;border:1px solid var(--border);cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:transform .3s,border-color .3s,box-shadow .3s;
 }
-
-.hero-ctas { display: flex; gap: 12px; margin-bottom: 40px; }
-
-.cta-primary {
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  padding: 12px 28px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  letter-spacing: .5px;
-  transition: background .2s, transform .2s, box-shadow .2s;
-  box-shadow: 0 4px 24px rgba(229,9,20,.35);
+.feat::after{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.07),transparent 65%);
+  pointer-events:none;
 }
+.feat:hover{transform:translateY(-5px);border-color:var(--border2);box-shadow:0 24px 60px rgba(0,0,0,.45)}
 
-.cta-primary:hover {
-  background: var(--accent2);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px rgba(229,9,20,.45);
+.feat-icon{
+  width:50px;height:50px;border-radius:13px;
+  background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;
 }
+.feat-icon img{width:34px;height:34px;object-fit:contain;mix-blend-mode:screen;filter:brightness(1.2) saturate(1.5)}
+.feat-icon span{font-size:22px}
 
-.cta-secondary {
-  background: rgba(255,255,255,.06);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 500;
-  padding: 12px 24px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  letter-spacing: .3px;
-  transition: background .2s, border-color .2s;
+.feat-title{font-family:var(--fd);font-size:22px;letter-spacing:.5px;margin-bottom:8px;color:var(--text)}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.feat-cta{margin-top:16px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc)}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;padding:20px 0}
+.spinner{width:16px;height:16px;border:2px solid rgba(168,85,247,.2);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.12),transparent);margin:0 40px}
+
+/* ── MODAL ── */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.95);z-index:600;
+  align-items:center;justify-content:center;
 }
-
-.cta-secondary:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.18); }
-
-.hero-stats { display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,.07); padding-top: 24px; }
-
-.stat { padding-right: 28px; }
-.stat + .stat { padding-left: 28px; border-left: 1px solid rgba(255,255,255,.07); }
-
-.stat-num {
-  font-family: var(--font-display);
-  font-size: 30px;
-  color: var(--accent);
-  line-height: 1;
-  letter-spacing: 1px;
+.overlay.open{display:flex}
+.modal{
+  background:linear-gradient(180deg,#1c1838,#0f0d1e);
+  border-radius:18px;max-width:800px;width:92%;
+  max-height:88vh;overflow-y:auto;
+  border:1px solid var(--border2);
+  box-shadow:0 40px 100px rgba(0,0,0,.85),0 0 60px rgba(124,58,237,.1);
+  position:relative;
 }
-
-.stat-lbl {
-  font-size: 10.5px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-top: 4px;
+.modal-x{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,.08);border:none;color:var(--muted2);
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;z-index:5;
 }
-
-.hero-dots {
-  position: absolute;
-  bottom: 24px; right: 64px;
-  z-index: 10;
-  display: flex;
-  gap: 10px;
+.modal-x:hover{background:rgba(255,255,255,.15);color:#fff}
+.modal-body{display:flex;flex-wrap:wrap;padding:28px;gap:22px}
+.modal-poster{width:190px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.7);flex-shrink:0}
+.modal-det{flex:1;min-width:220px}
+.modal-title{font-family:var(--fd);font-size:30px;letter-spacing:.5px;margin-bottom:10px;line-height:1.1}
+.modal-meta{color:var(--acc3);font-size:12px;margin-bottom:16px;display:flex;gap:14px;flex-wrap:wrap}
+.modal-plot{color:rgba(240,238,255,.5);line-height:1.75;font-size:13.5px;margin-bottom:22px}
+.modal-play{
+  background:linear-gradient(135deg,var(--acc2),var(--acc));
+  border:none;color:#fff;padding:12px 28px;border-radius:8px;
+  font-weight:600;font-size:13.5px;cursor:pointer;
+  box-shadow:0 6px 28px rgba(124,58,237,.4);
+  transition:opacity .2s,transform .2s;
 }
+.modal-play:hover{opacity:.88;transform:translateY(-1px)}
 
-.hero-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.25);
-  cursor: pointer;
-  transition: all .3s;
+/* ── PLAYER ── */
+.player{
+  display:none;position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  z-index:700;background:#000;flex-direction:column;
 }
-
-.hero-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
-
-/* ─── SECTIONS ─── */
-.section { padding: 56px 40px; position: relative; }
-.section + .section { border-top: 1px solid rgba(255,255,255,.04); }
-
-.section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 24px;
+.player.open{display:flex}
+.player-bar{
+  padding:10px 20px;background:#0d0b1a;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);flex-shrink:0;height:52px;
 }
-
-.section-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 4px;
+.player-title{color:var(--text);font-size:14px;font-weight:500}
+.player-close{
+  background:rgba(168,85,247,.15);border:1px solid var(--border2);
+  color:var(--acc3);padding:6px 18px;border-radius:6px;cursor:pointer;
+  font-size:12.5px;font-family:var(--fb);font-weight:600;transition:background .2s;
 }
+.player-close:hover{background:rgba(168,85,247,.28)}
+.player-frame{width:100%;flex:1;border:none}
 
-.section-title {
-  font-family: var(--font-display);
-  font-size: 28px;
-  letter-spacing: 1px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  line-height: 1;
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:28px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(6,5,15,.5);
 }
+.foot-logo img{height:48px;mix-blend-mode:screen;filter:brightness(1.1)}
+.foot-logo-fb{font-family:var(--fd);font-size:22px;letter-spacing:3px;background:linear-gradient(135deg,var(--acc3),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:none}
+.foot-links{display:flex;gap:18px}
+.foot-link{font-size:11.5px;color:var(--muted);cursor:pointer;transition:color .2s}
+.foot-link:hover{color:var(--acc3)}
+.foot-copy{font-size:11px;color:var(--muted)}
 
-.section-title .icon {
-  width: 42px; height: 42px;
-  object-fit: contain;
-  opacity: 1;
-  mix-blend-mode: screen;
-  filter: brightness(1.15);
-}
-.section-title span { color: var(--accent); }
-
-.section-link {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color .2s, border-color .2s, background .2s;
-  border: 1px solid var(--border);
-  padding: 7px 16px;
-  border-radius: 4px;
-}
-
-.section-link:hover { color: var(--text); border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.04); }
-
-/* ─── SCROLL ROW ─── */
-.scroll-row {
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,.1) transparent;
-}
-
-.scroll-row::-webkit-scrollbar { height: 3px; }
-.scroll-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
-
-/* ─── ANIME SCROLL CARD ─── */
-.scroll-card {
-  flex-shrink: 0;
-  width: 150px;
-  background: var(--card);
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  scroll-snap-align: start;
-  border: 1px solid var(--border);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s;
-  position: relative;
-}
-
-.scroll-card:hover {
-  transform: scale(1.06) translateY(-4px);
-  box-shadow: 0 20px 48px rgba(0,0,0,.7), 0 0 0 2px var(--accent);
-  border-color: var(--accent);
-  z-index: 5;
-}
-
-.scroll-card-thumb {
-  width: 100%;
-  aspect-ratio: 2/3;
-  object-fit: cover;
-  display: block;
-  background: var(--surface);
-  transition: transform .3s;
-}
-
-.scroll-card:hover .scroll-card-thumb { transform: scale(1.05); }
-
-.scroll-card-play {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(.6);
-  width: 40px; height: 40px;
-  background: rgba(229,9,20,.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all .25s;
-}
-
-.scroll-card-play::after {
-  content: '';
-  border: 7px solid transparent;
-  border-left: 12px solid #fff;
-  margin-left: 3px;
-}
-
-.scroll-card:hover .scroll-card-play { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-.scroll-card-info { padding: 10px 11px 12px; }
-
-.scroll-card-title {
-  font-size: 12.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--text);
-}
-
-.scroll-card-meta { font-size: 10.5px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 5px; }
-
-.badge-type {
-  background: var(--accent);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-}
-
-/* ─── TV CARDS ─── */
-.tv-card {
-  flex-shrink: 0;
-  width: 180px;
-  background: var(--card);
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s;
-}
-
-.tv-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,.7); border-color: rgba(255,255,255,.18); }
-
-.tv-thumb {
-  width: 100%;
-  aspect-ratio: 16/9;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.tv-thumb::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, rgba(229,9,20,.07), transparent 70%);
-}
-
-.tv-thumb img { width: 38px; height: 38px; object-fit: contain; opacity: .7; position: relative; z-index: 1; }
-.tv-thumb-emoji { font-size: 34px; position: relative; z-index: 1; }
-
-.tv-live {
-  position: absolute;
-  top: 8px; right: 8px;
-  background: #e03535;
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  padding: 3px 7px;
-  border-radius: 3px;
-  z-index: 2;
-}
-
-.tv-card-info { padding: 10px 12px 13px; }
-.tv-card-name { font-size: 13px; font-weight: 600; color: var(--text); }
-.tv-card-sub  { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
-
-/* ─── FEATURE CARDS ─── */
-.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-
-.feat-card {
-  background: var(--card);
-  border-radius: 10px;
-  padding: 28px 24px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: transform .3s, border-color .3s, box-shadow .3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.feat-card::before {
-  content: '';
-  position: absolute;
-  top: -50px; right: -50px;
-  width: 160px; height: 160px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(229,9,20,.07) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.feat-card:hover { transform: translateY(-4px); border-color: rgba(229,9,20,.3); box-shadow: 0 20px 48px rgba(0,0,0,.5); }
-
-.feat-icon {
-  width: 50px; height: 50px;
-  border-radius: 12px;
-  background: rgba(229,9,20,.1);
-  border: 1px solid rgba(229,9,20,.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 18px;
-}
-
-.feat-icon img { width: 38px; height: 38px; object-fit: contain; mix-blend-mode: screen; filter: brightness(1.1); }
-.feat-icon-emoji { font-size: 24px; }
-
-.feat-title { font-family: var(--font-display); font-size: 22px; letter-spacing: .5px; margin-bottom: 8px; color: var(--text); }
-.feat-desc   { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
-.feat-count  { margin-top: 16px; font-size: 10.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-
-/* ─── LOADING ─── */
-.loading { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; padding: 16px 0; }
-
-.spinner {
-  width: 18px; height: 18px;
-  border: 2px solid rgba(229,9,20,.2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-  flex-shrink: 0;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ─── FOOTER ─── */
-footer {
-  border-top: 1px solid rgba(255,255,255,.05);
-  padding: 32px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.footer-logo { display: flex; align-items: center; }
-.footer-logo img { height: 52px; mix-blend-mode: screen; filter: brightness(1.1); }
-.footer-logo-text { font-family: var(--font-display); font-size: 22px; letter-spacing: 2px; color: var(--accent); display: none; }
-.footer-logo-text span { color: var(--muted); }
-.footer-copy { font-size: 12px; color: var(--muted); }
-
-/* ─── RESPONSIVE ─── */
-@media (max-width: 900px) { .features-grid { grid-template-columns: 1fr 1fr; } }
-
-@media (max-width: 768px) {
-  header { padding: 0 20px; }
-  .nav-btn .nav-label { display: none; }
-  .nav-btn { padding: 7px 10px; }
-  .hero { height: 500px; }
-  .hero-content { padding: 0 24px 44px; }
-  .hero-title { font-size: 58px; }
-  .hero-cards { display: none; }
-  .hero-dots { right: 24px; }
-  .section { padding: 44px 20px; }
-  footer { flex-direction: column; gap: 10px; padding: 24px 20px; text-align: center; }
-  .features-grid { grid-template-columns: 1fr; }
+/* ── RESPONSIVE ── */
+@media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){
+  header{padding:0 18px;height:60px}
+  .nb .lbl{display:none}
+  .nb{padding:7px 10px}
+  .hero-title{font-size:56px}
+  .hero-content{padding:0 22px 72px;max-width:100%}
+  .section{padding:0 18px 44px}
+  .divider{margin:0 18px}
+  .feat-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:12px;padding:22px 18px;text-align:center}
+  .foot-links{justify-content:center}
+  .modal-body{flex-direction:column;align-items:center;text-align:center}
+  .modal-poster{width:155px}
+  .hero-indicators{right:20px}
 }
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<header id="mainHeader">
-  <a class="logo" href="index.html" onclick="return false;">
-    <img src="assets/images/logo.png" alt="DexTV"
-         onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block'">
-    <div class="logo-fallback">DEX<span>TV</span></div>
+<header id="hdr">
+  <a class="logo" href="index.html" onclick="return false">
+    <img src="assets/images/logo.png" alt="DexTV" onerror="this.style.display='none';document.querySelector('.logo-fb').style.display='block'">
+    <div class="logo-fb">DEXTV</div>
   </a>
   <nav>
-    <button class="nav-btn active" onclick="window.location.href='index.html'">
-      <span class="nav-label">Inicio</span>
-    </button>
-    <button class="nav-btn" onclick="window.location.href='anime.html'">
+    <button class="nb active" onclick="location.href='index.html'"><span class="lbl">Inicio</span></button>
+    <button class="nb" onclick="location.href='anime.html'">
       <img src="assets/icons/anime1.png" alt="" onerror="this.style.display='none'">
-      <span class="nav-label">Anime</span>
+      <span class="lbl">Anime</span>
     </button>
-    <button class="nav-btn" onclick="window.location.href='tv.html'">
+    <button class="nb" onclick="location.href='tv.html'">
       <img src="assets/icons/tv.png" alt="" onerror="this.style.display='none'">
-      <span class="nav-label">TV Directo</span>
+      <span class="lbl">TV Directo</span>
+    </button>
+    <button class="nb" onclick="location.href='peliculas.html'">
+      <img src="assets/icons/pelicula.png" alt="" onerror="this.style.display='none'">
+      <span class="lbl">Películas</span>
     </button>
   </nav>
 </header>
 
 <!-- HERO -->
-<div class="hero" id="heroBanner">
-  <div class="hero-bg">
-    <div class="hero-grid"></div>
-  </div>
-  <div class="hero-cards" id="heroCards"></div>
-  <div class="hero-gradient"></div>
-
-  <div class="hero-content">
-    <div class="hero-eyebrow">
-      <span class="live-dot"></span>
-      STREAMING GRATIS
-    </div>
-    <h1 class="hero-title" id="heroTitle">
-      TODO TU<br>
-      <span class="red">CONTENIDO</span><br>
-      GRATIS
-    </h1>
-    <p class="hero-desc">
-      Anime, TV en directo y mucho más.<br>
-      Sin registros. Sin publicidad. Sin límites.
-    </p>
-    <div class="hero-ctas">
-      <button class="cta-primary" onclick="window.location.href='anime.html'">⚔️ Explorar Anime</button>
-      <button class="cta-secondary" onclick="window.location.href='tv.html'">📺 TV en Vivo</button>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-num">40K+</div><div class="stat-lbl">Animes</div></div>
-      <div class="stat"><div class="stat-num">100+</div><div class="stat-lbl">Canales TV</div></div>
-      <div class="stat"><div class="stat-num">∞</div><div class="stat-lbl">Gratis</div></div>
+<div class="hero" id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content" id="heroContent">
+    <div class="hero-badge"><span class="dot"></span>NUEVO EN DEXTV</div>
+    <h1 class="hero-title" id="heroTitle">CARGANDO<br><span class="g">CONTENIDO</span></h1>
+    <div class="hero-meta" id="heroMeta"></div>
+    <p class="hero-desc" id="heroDesc">El mejor contenido gratis, sin registros.</p>
+    <div class="hero-btns">
+      <button class="btn-play" id="heroPlay">Reproducir</button>
+      <button class="btn-info" id="heroInfo">Más info</button>
     </div>
   </div>
-
-  <div class="hero-dots" id="heroDots"></div>
+  <div class="hero-progress"><div class="hero-progress-fill" id="heroFill"></div></div>
+  <div class="hero-indicators" id="heroInds"></div>
 </div>
 
-<!-- ANIME ROW -->
-<div class="section">
-  <div class="section-head">
+<!-- ANIME POPULAR -->
+<div class="section" style="padding-top:32px">
+  <div class="row-head">
     <div>
-      <div class="section-label">Catálogo</div>
-      <div class="section-title">
-        <img class="icon" src="assets/icons/anime1.png" alt="" onerror="this.style.display='none'">
-        ANIME <span>POPULAR</span>
+      <div class="row-label">Catálogo</div>
+      <div class="row-title">
+        <img src="assets/icons/anime1.png" alt="" onerror="this.style.display='none'">
+        ANIME <span class="g">POPULAR</span>
       </div>
     </div>
-    <div class="section-link" onclick="window.location.href='anime.html'">Ver todo →</div>
+    <div class="row-link" onclick="location.href='anime.html'">Ver todo →</div>
   </div>
-  <div class="scroll-row" id="homeAnimeRow">
-    <div class="loading"><div class="spinner"></div>Cargando animes...</div>
+  <div class="scroll-row" id="animeRow">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
   </div>
 </div>
 
-<!-- TV ROW -->
-<div class="section">
-  <div class="section-head">
+<div class="divider"></div>
+
+<!-- TOP 10 PELÍCULAS -->
+<div class="section" style="padding-top:44px">
+  <div class="row-head">
     <div>
-      <div class="section-label">En Vivo Ahora</div>
-      <div class="section-title">
-        <img class="icon" src="assets/icons/tv.png" alt="" onerror="this.style.display='none'">
-        TV EN <span>DIRECTO</span>
+      <div class="row-label">Más vistos hoy</div>
+      <div class="row-title">
+        <img src="assets/icons/pelicula.png" alt="" onerror="this.style.display='none'">
+        TOP 10 <span class="g">PELÍCULAS</span>
       </div>
     </div>
-    <div class="section-link" onclick="window.location.href='tv.html'">Ver todo →</div>
+    <div class="row-link" onclick="location.href='peliculas.html'">Ver todo →</div>
   </div>
-  <div class="scroll-row" id="homeTVRow">
-    <div class="loading"><div class="spinner"></div>Cargando canales...</div>
+  <div class="top-row" id="topRow">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
   </div>
 </div>
 
-<!-- FEATURES -->
-<div class="section">
-  <div class="section-head">
+<div class="divider"></div>
+
+<!-- PELÍCULAS NUEVAS -->
+<div class="section" style="padding-top:44px">
+  <div class="row-head">
     <div>
-      <div class="section-label">Plataforma</div>
-      <div class="section-title">TODO EN UN <span>LUGAR</span></div>
+      <div class="row-label">Recién llegadas</div>
+      <div class="row-title">
+        <img src="assets/icons/pelicula.png" alt="" onerror="this.style.display='none'">
+        PELÍCULAS <span class="g">RECIENTES</span>
+      </div>
+    </div>
+    <div class="row-link" onclick="location.href='peliculas.html'">Ver todo →</div>
+  </div>
+  <div class="scroll-row" id="movieRow">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TV EN DIRECTO -->
+<div class="section" style="padding-top:44px">
+  <div class="row-head">
+    <div>
+      <div class="row-label">En vivo ahora</div>
+      <div class="row-title">
+        <img src="assets/icons/tv.png" alt="" onerror="this.style.display='none'">
+        TV EN <span class="g">DIRECTO</span>
+      </div>
+    </div>
+    <div class="row-link" onclick="location.href='tv.html'">Ver todo →</div>
+  </div>
+  <div class="scroll-row" id="tvRow">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TODO EN UN LUGAR -->
+<div class="section" style="padding-top:44px">
+  <div class="row-head">
+    <div>
+      <div class="row-label">Plataforma</div>
+      <div class="row-title">TODO EN UN <span class="g">LUGAR</span></div>
     </div>
   </div>
-  <div class="features-grid">
-
-    <div class="feat-card" onclick="window.location.href='anime.html'">
-      <div class="feat-icon">
-        <img src="assets/icons/anime1.png" alt="Anime" onerror="this.outerHTML='<span class=feat-icon-emoji>⚔️</span>'">
-      </div>
+  <div class="feat-grid">
+    <div class="feat" onclick="location.href='anime.html'">
+      <div class="feat-icon"><img src="assets/icons/anime1.png" alt="" onerror="this.outerHTML='<span>⚔️</span>'"></div>
       <div class="feat-title">ANIME</div>
-      <div class="feat-desc">Desde clásicos hasta los últimos estrenos. Shonen, isekai, romance, acción y más géneros.</div>
-      <div class="feat-count">40,000+ títulos →</div>
+      <div class="feat-desc">Shonen, isekai, romance, acción. Clásicos y últimos estrenos sin límites.</div>
+      <div class="feat-cta">40,000+ títulos →</div>
     </div>
-
-    <div class="feat-card" onclick="window.location.href='tv.html'">
-      <div class="feat-icon">
-        <img src="assets/icons/tv.png" alt="TV" onerror="this.outerHTML='<span class=feat-icon-emoji>📺</span>'">
-      </div>
+    <div class="feat" onclick="location.href='peliculas.html'">
+      <div class="feat-icon"><img src="assets/icons/pelicula.png" alt="" onerror="this.outerHTML='<span>🎬</span>'"></div>
+      <div class="feat-title">PELÍCULAS & SERIES</div>
+      <div class="feat-desc">Blockbusters, indie, terror, sci-fi. Las mejores del mundo en un solo lugar.</div>
+      <div class="feat-cta">8,000+ títulos →</div>
+    </div>
+    <div class="feat" onclick="location.href='tv.html'">
+      <div class="feat-icon"><img src="assets/icons/tv.png" alt="" onerror="this.outerHTML='<span>📺</span>'"></div>
       <div class="feat-title">TV DIRECTO</div>
-      <div class="feat-desc">Canales nacionales e internacionales en tiempo real. Noticias, deportes y entretenimiento 24/7.</div>
-      <div class="feat-count">100+ canales →</div>
+      <div class="feat-desc">Noticias, deportes y entretenimiento. Más de 100 canales nacionales e internacionales 24/7.</div>
+      <div class="feat-cta">100+ canales →</div>
     </div>
-
-    <div class="feat-card" style="opacity:.55; cursor:default;">
-      <div class="feat-icon" style="background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08);">
-        <img src="assets/icons/pelicula.png" alt="Películas" onerror="this.outerHTML='<span class=feat-icon-emoji>🎬</span>'">
-      </div>
-      <div class="feat-title">PELÍCULAS</div>
-      <div class="feat-desc">Series y películas en camino. Más contenido para completar tu experiencia.</div>
-      <div class="feat-count" style="color:var(--muted)">MUY PRONTO</div>
-    </div>
-
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">
-    <img src="assets/images/logo.png" alt="DexTV"
-         onerror="this.style.display='none'; document.querySelector('.footer-logo-text').style.display='block'">
-    <div class="footer-logo-text">DEX<span>TV</span></div>
+  <div class="foot-logo">
+    <img src="assets/images/logo.png" alt="DexTV" onerror="this.style.display='none';document.querySelector('.foot-logo-fb').style.display='block'">
+    <div class="foot-logo-fb">DEXTV</div>
   </div>
-  <div class="footer-copy">© 2025 DexTV — Contenido bajo licencia de uso público</div>
+  <div class="foot-links">
+    <span class="foot-link" onclick="location.href='anime.html'">Anime</span>
+    <span class="foot-link" onclick="location.href='peliculas.html'">Películas</span>
+    <span class="foot-link" onclick="location.href='tv.html'">TV</span>
+  </div>
+  <div class="foot-copy">© 2025 DexTV — Contenido bajo licencia de uso público</div>
 </footer>
+
+<!-- MODAL INFO -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-body">
+      <img class="modal-poster" id="mPoster" alt="">
+      <div class="modal-det">
+        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-meta" id="mMeta"></div>
+        <div class="modal-plot" id="mPlot"></div>
+        <button class="modal-play" id="mPlayBtn">▶ Reproducir ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER -->
+<div class="player" id="playerEl">
+  <div class="player-bar">
+    <span class="player-title" id="playerTitle">Reproduciendo...</span>
+    <button class="player-close" onclick="closePlayer()">✕ Cerrar</button>
+  </div>
+  <iframe class="player-frame" id="playerFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
+</div>
 
 <script type="module">
 import { searchAnime, buildAnime1vUrl } from './js/api.js';
 
-/* scroll header */
-const header = document.getElementById('mainHeader');
-window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 60));
+/* ── CONSTANTS ── */
+const OMDB = 'https://www.omdbapi.com/';
+const KEY  = '48f2098a';
+const VS   = 'https://vidsrc-embed.ru';
+
+/* ── TOP 10 DATA ── */
+const TOP10 = [
+  { t:'Oppenheimer',    id:'tt15398776', y:2023, r:'8.9', p:'https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg' },
+  { t:'Dune: Part Two', id:'tt15239678', y:2024, r:'8.5', p:'https://m.media-amazon.com/images/M/MV5BN2QyZGU4ZDctOWMzMy00NTc5LThlOGQtODhmNDBiNTI3ZWUyXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
+  { t:'The Dark Knight',id:'tt0468569',  y:2008, r:'9.0', p:'https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg' },
+  { t:'Inception',      id:'tt1375666',  y:2010, r:'8.8', p:'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg' },
+  { t:'Interstellar',   id:'tt0816692',  y:2014, r:'8.7', p:'https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg' },
+  { t:'Joker',          id:'tt7286456',  y:2019, r:'8.4', p:'https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+  { t:'The Matrix',     id:'tt0133093',  y:1999, r:'8.7', p:'https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg' },
+  { t:'Avengers: Endgame',id:'tt4154796',y:2019,r:'8.4',  p:'https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_.jpg' },
+  { t:'Spider-Man: NWH',id:'tt10872600',y:2021, r:'8.2', p:'https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg' },
+  { t:'GotG Vol. 2',    id:'tt3896198',  y:2017, r:'7.6', p:'https://m.media-amazon.com/images/M/MV5BNWE5MGI3MDctMmU5Ni00YzI2LWEzMTQtZGIyZDA5MzQzNDBhXkEyXkFqcGc@._V1_QL75_UX380_CR0,1,380,562_.jpg' },
+];
+
+const RECENT = [
+  { t:'Gladiator II',     id:'tt9218128',  y:2024, r:'7.4', p:'https://m.media-amazon.com/images/M/MV5BNjY1OTQ3NDMtMDQ0NC00YWVlLWI4YWMtMzQ2NTRiMmI2YWQzXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_.jpg' },
+  { t:'Inside Out 2',     id:'tt22022452', y:2024, r:'7.4', p:'https://m.media-amazon.com/images/M/MV5BOTljYWZlMjEtNDYyNS00MDBhLThkNTMtODgzNzc5MDZlYWE3XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+  { t:'Deadpool & Wolverine',id:'tt6263850',y:2024,r:'7.7',p:'https://m.media-amazon.com/images/M/MV5BYWY3ZGFkMGQtMWI5MC00ODc3LThjZjctMjIzZTQ0NWVkZjA2XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+  { t:'Alien: Romulus',   id:'tt18412256', y:2024, r:'7.2', p:'https://m.media-amazon.com/images/M/MV5BNWM1MDFhNGMtNTZjNy00ZWNhLWE0YjEtMmQ4ZGI4ZmZlNWI3XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
+  { t:'Kung Fu Panda 4',  id:'tt21692408', y:2024, r:'6.5', p:'https://m.media-amazon.com/images/M/MV5BNjJkYTkzNzctOGY4YS00MTA5LTk2MDctOGY5NGJkNmZkYTI5XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg' },
+  { t:'Civil War',        id:'tt17279496', y:2024, r:'7.3', p:'https://m.media-amazon.com/images/M/MV5BNzE3YTkzNjktMTgwNy00ZWFiLWI5MDktMmVjMGFjN2NkMzVjXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
+  { t:'The Substance',    id:'tt17526714', y:2024, r:'7.4', p:'https://m.media-amazon.com/images/M/MV5BMzE2ZGM3YTEtOTNhNy00NzgwLTlhNzMtN2YwYjBiZmFhYmNmXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+  { t:'Longlegs',         id:'tt21815562', y:2024, r:'5.8', p:'https://m.media-amazon.com/images/M/MV5BZjVhOThhOGEtMTBmOC00ZTMwLTk3ZTgtMmNkMjcyM2E2YTcyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+];
+
+const TV_CH = [
+  {n:'Señal Colombia',e:'🇨🇴'},{n:'Caracol TV',e:'📡'},{n:'RCN TV',e:'📺'},
+  {n:'CNN Español',e:'📰'},{n:'France 24',e:'🌐'},{n:'DW Español',e:'📻'},
+  {n:'ESPN',e:'⚽'},{n:'NTN24',e:'🎙️'},{n:'Telemundo',e:'📺'},{n:'Univision',e:'🌎'},
+];
+
+/* ── HEADER SCROLL ── */
+const hdr = document.getElementById('hdr');
+window.addEventListener('scroll', () => hdr.classList.toggle('solid', scrollY > 80));
 
 /* ── HERO ROTATIVO ── */
-const FALLBACK = [
-  'https://cdn.myanimelist.net/images/anime/13/17405l.jpg',
-  'https://cdn.myanimelist.net/images/anime/6/73245l.jpg',
-  'https://cdn.myanimelist.net/images/anime/1286/99889l.jpg',
-  'https://cdn.myanimelist.net/images/anime/1000/110531l.jpg',
+const HERO_SLIDES = [
+  ...TOP10.slice(0,4).map(m => ({ type:'movie', ...m })),
 ];
+let heroIdx = 0, heroTimer = null, progTimer = null, progStart = null;
+const HERO_DUR = 7000;
 
-let slides = [], idx = 0, timer = null;
-
-const SLIDES_DEF = [
-  { title: 'TODO TU<br><span class="red">CONTENIDO</span><br>GRATIS' },
-  { title: 'ANIME <span class="red">PARA</span><br>TODOS<br>GRATIS' },
-  { title: 'LO MEJOR<br>DEL <span class="red">ANIME</span><br>AQUÍ' },
-  { title: 'TV EN<br><span class="red">DIRECTO</span><br>24/7' },
-];
-
-function buildSlides(animes) {
-  const pics = animes.filter(a => a.picture && !a.picture.includes('placehold')).slice(0, 16);
-  slides = SLIDES_DEF.map((s, i) => {
-    const imgs = pics.slice(i * 4, i * 4 + 4).map(a => a.picture);
-    return { ...s, images: imgs.length >= 4 ? imgs : FALLBACK };
-  });
-  showSlide(0);
-  buildDots();
-  startTimer();
-}
-
-function showSlide(i) {
-  const s = slides[i];
-  if (!s) return;
-  const titleEl = document.getElementById('heroTitle');
-  const cardsEl = document.getElementById('heroCards');
-  if (titleEl) titleEl.innerHTML = s.title;
-  if (cardsEl) {
-    cardsEl.innerHTML = s.images.map((src, n) =>
-      `<img class="hero-card-img" src="${src}" alt=""
-            style="animation-delay:${n * .1}s"
-            onerror="this.style.display='none'">`
-    ).join('');
-  }
-  document.querySelectorAll('.hero-dot').forEach((d, j) => d.classList.toggle('active', j === i));
-}
-
-function buildDots() {
-  const el = document.getElementById('heroDots');
-  if (!el) return;
-  el.innerHTML = slides.map((_, i) =>
-    `<div class="hero-dot${i === 0 ? ' active' : ''}" data-i="${i}"></div>`
+function heroSetup(slides) {
+  const bg = document.getElementById('heroBg');
+  bg.innerHTML = slides.map((s, i) =>
+    `<div class="hero-slide${i===0?' active':''}" style="background-image:url('${s.p}')"></div>`
   ).join('');
-  el.querySelectorAll('.hero-dot').forEach(d => {
-    d.addEventListener('click', () => {
-      clearInterval(timer);
-      idx = +d.dataset.i;
-      showSlide(idx);
-      startTimer();
-    });
+
+  const inds = document.getElementById('heroInds');
+  inds.innerHTML = slides.map((_,i) =>
+    `<div class="hind${i===0?' active':''}" data-i="${i}"></div>`
+  ).join('');
+  inds.querySelectorAll('.hind').forEach(d =>
+    d.addEventListener('click', () => heroGo(+d.dataset.i))
+  );
+
+  heroShow(0);
+  heroStartTimer();
+}
+
+function heroShow(i) {
+  const slides = document.querySelectorAll('.hero-slide');
+  const inds   = document.querySelectorAll('.hind');
+  slides.forEach((s,j) => s.classList.toggle('active', j===i));
+  inds.forEach((d,j)   => d.classList.toggle('active',  j===i));
+
+  const s = HERO_SLIDES[i];
+  document.getElementById('heroTitle').innerHTML =
+    s.t.toUpperCase().replace(' ', '<br><span class="g">') + '</span>';
+  document.getElementById('heroMeta').innerHTML =
+    `<span class="hmeta"><span class="yr">${s.y}</span></span>
+     <span class="hmeta sep">•</span>
+     <span class="hmeta">⭐ ${s.r}/10</span>
+     <span class="hmeta sep">•</span>
+     <span class="hmeta">Película</span>`;
+  document.getElementById('heroDesc').textContent =
+    'Disponible ahora en DexTV de forma completamente gratuita.';
+
+  document.getElementById('heroPlay').onclick = () => openPlayer(s.id, s.t, 'movie');
+  document.getElementById('heroInfo').onclick = () => openModal(s.id, s.t, s.p, 'movie');
+
+  heroIdx = i;
+  heroResetProgress();
+}
+
+function heroGo(i) {
+  clearInterval(heroTimer);
+  heroShow(i);
+  heroStartTimer();
+}
+
+function heroStartTimer() {
+  clearInterval(heroTimer);
+  heroTimer = setInterval(() => {
+    heroShow((heroIdx + 1) % HERO_SLIDES.length);
+  }, HERO_DUR);
+}
+
+function heroResetProgress() {
+  const fill = document.getElementById('heroFill');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  requestAnimationFrame(() => {
+    fill.style.transition = `width ${HERO_DUR}ms linear`;
+    fill.style.width = '100%';
   });
 }
 
-function startTimer() {
-  clearInterval(timer);
-  timer = setInterval(() => { idx = (idx + 1) % slides.length; showSlide(idx); }, 6000);
-}
+heroSetup(HERO_SLIDES);
 
 /* ── ANIME ROW ── */
-async function loadAnimeRow() {
-  const row = document.getElementById('homeAnimeRow');
-  if (!row) return;
+async function loadAnime() {
+  const row = document.getElementById('animeRow');
   try {
-    const animes = await searchAnime('anime');
-    buildSlides(animes);
-    row.innerHTML = animes.slice(0, 16).map(anime => {
-      const url = buildAnime1vUrl(anime.title);
-      const pic = anime.picture ||
-        `https://placehold.co/300x450/16161f/e50914?text=${encodeURIComponent(anime.title.substring(0,2).toUpperCase())}`;
-      return `
-        <div class="scroll-card"
-             onclick="window.location.href='player.html?url=${encodeURIComponent(url)}&title=${encodeURIComponent(anime.title)}'">
-          <img class="scroll-card-thumb" src="${pic}" alt="${anime.title}" loading="lazy"
-               onerror="this.src='https://placehold.co/300x450/16161f/e50914?text=${encodeURIComponent(anime.title.substring(0,2).toUpperCase())}'">
-          <div class="scroll-card-play"></div>
-          <div class="scroll-card-info">
-            <div class="scroll-card-title">${anime.title}</div>
-            <div class="scroll-card-meta">
-              <span class="badge-type">${anime.type || 'TV'}</span>
-              ${anime.year ? `<span>${anime.year}</span>` : ''}
-            </div>
+    const list = await searchAnime('anime');
+    row.innerHTML = list.slice(0,20).map(a => {
+      const url = buildAnime1vUrl(a.title);
+      const pic = a.picture || `https://placehold.co/300x450/16122a/a855f7?text=${encodeURIComponent(a.title.slice(0,2).toUpperCase())}`;
+      return `<div class="card" onclick="location.href='player.html?url=${encodeURIComponent(url)}&title=${encodeURIComponent(a.title)}'">
+        <img class="card-thumb" src="${pic}" loading="lazy" alt="${a.title}"
+             onerror="this.src='https://placehold.co/300x450/16122a/a855f7?text=${encodeURIComponent(a.title.slice(0,2).toUpperCase())}'">
+        <div class="card-play"></div>
+        <div class="card-info">
+          <div class="card-title">${a.title}</div>
+          <div class="card-meta">
+            <span class="badge">${a.type||'TV'}</span>
+            ${a.year?`<span>${a.year}</span>`:''}
           </div>
-        </div>`;
+        </div>
+      </div>`;
     }).join('');
-  } catch(e) {
-    console.error(e);
-    row.innerHTML = '<div class="loading" style="color:#e03535">Error al cargar animes</div>';
-  }
+  } catch { row.innerHTML = '<div class="loading" style="color:#e03535">Error al cargar</div>'; }
 }
 
-/* ── TV ROW ── */
-const TV_CHANNELS = [
-  { name: 'Señal Colombia', emoji: '🇨🇴' },
-  { name: 'Caracol TV',     emoji: '📡' },
-  { name: 'RCN TV',         emoji: '📺' },
-  { name: 'CNN Español',    emoji: '📰' },
-  { name: 'France 24',      emoji: '🌐' },
-  { name: 'DW Español',     emoji: '📻' },
-  { name: 'ESPN',           emoji: '⚽' },
-  { name: 'NTN24',          emoji: '🎙️' },
-];
+/* ── TOP 10 ROW ── */
+function loadTop10() {
+  const row = document.getElementById('topRow');
+  row.innerHTML = TOP10.map((m,i) => `
+    <div class="top-card" onclick='openModal("${m.id}","${m.t.replace(/"/g,"'")}","${m.p}","movie")'>
+      <div class="top-num">${i+1}</div>
+      <img class="top-thumb" src="${m.p}" alt="${m.t}" loading="lazy"
+           onerror="this.src='https://placehold.co/120x170/16122a/a855f7?text=${i+1}'">
+    </div>
+  `).join('');
+}
 
-function loadTVRow() {
-  const row = document.getElementById('homeTVRow');
-  if (!row) return;
-  row.innerHTML = TV_CHANNELS.map(ch => `
-    <div class="tv-card" onclick="window.location.href='tv.html'">
-      <div class="tv-thumb">
-        <img src="assets/icons/tv.png" alt=""
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-        <span class="tv-thumb-emoji" style="display:none">${ch.emoji}</span>
-        <span class="tv-live">LIVE</span>
-      </div>
-      <div class="tv-card-info">
-        <div class="tv-card-name">${ch.name}</div>
-        <div class="tv-card-sub">En vivo ahora</div>
+/* ── RECENT MOVIES ── */
+function loadMovies() {
+  const row = document.getElementById('movieRow');
+  row.innerHTML = RECENT.map(m => `
+    <div class="card" onclick='openModal("${m.id}","${m.t.replace(/"/g,"'")}","${m.p}","movie")'>
+      <img class="card-thumb" src="${m.p}" alt="${m.t}" loading="lazy"
+           onerror="this.src='https://placehold.co/300x450/16122a/a855f7?text=${encodeURIComponent(m.t.charAt(0))}'">
+      <div class="card-play"></div>
+      <div class="card-star">★ ${m.r}</div>
+      <div class="card-info">
+        <div class="card-title">${m.t}</div>
+        <div class="card-meta"><span class="badge badge-red">NEW</span><span>${m.y}</span></div>
       </div>
     </div>
   `).join('');
 }
 
-loadAnimeRow();
-loadTVRow();
+/* ── TV ROW ── */
+function loadTV() {
+  const row = document.getElementById('tvRow');
+  row.innerHTML = TV_CH.map(ch => `
+    <div class="tv-card" onclick="location.href='tv.html'">
+      <div class="tv-thumb">
+        <img src="assets/icons/tv.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="tv-thumb-ej" style="display:none">${ch.e}</span>
+        <span class="tv-live">LIVE</span>
+      </div>
+      <div class="tv-info">
+        <div class="tv-name">${ch.n}</div>
+        <div class="tv-sub">En vivo ahora</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── MODAL ── */
+window.openModal = async function(id, title, poster, type) {
+  const ov = document.getElementById('modalOverlay');
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mPoster').src = poster;
+  document.getElementById('mPlot').textContent = 'Cargando detalles...';
+  document.getElementById('mMeta').innerHTML = '';
+  ov.classList.add('open');
+  try {
+    const r = await fetch(`${OMDB}?apikey=${KEY}&i=${id}&plot=full`);
+    const d = await r.json();
+    document.getElementById('mTitle').textContent = d.Title || title;
+    document.getElementById('mPoster').src = d.Poster !== 'N/A' ? d.Poster : poster;
+    document.getElementById('mMeta').innerHTML =
+      `<span>📅 ${d.Year||'—'}</span><span>⭐ ${d.imdbRating||'—'}/10</span><span>🎬 ${d.Genre||'Película'}</span><span>⏱️ ${d.Runtime||'—'}</span>`;
+    document.getElementById('mPlot').textContent = d.Plot || 'Sin sinopsis disponible.';
+    document.getElementById('mPlayBtn').onclick = () => { closeModal(); openPlayer(id, d.Title||title, type); };
+  } catch {
+    document.getElementById('mPlot').textContent = 'No se pudieron cargar los detalles.';
+    document.getElementById('mPlayBtn').onclick = () => { closeModal(); openPlayer(id, title, type); };
+  }
+};
+
+window.closeModal = function() { document.getElementById('modalOverlay').classList.remove('open') };
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal() });
+
+/* ── PLAYER ── */
+window.openPlayer = function(id, title, type) {
+  const url = type==='movie' ? `${VS}/embed/movie/${id}` : `${VS}/embed/tv/${id}/1/1`;
+  document.getElementById('playerTitle').textContent = '▶ ' + title;
+  document.getElementById('playerFrame').src = url;
+  document.getElementById('playerEl').classList.add('open');
+};
+
+window.closePlayer = function() {
+  document.getElementById('playerFrame').src = '';
+  document.getElementById('playerEl').classList.remove('open');
+};
+
+/* ── INIT ── */
+loadAnime();
+loadTop10();
+loadMovies();
+loadTV();
 </script>
 </body>
 </html>
